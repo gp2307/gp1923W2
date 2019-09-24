@@ -9,7 +9,7 @@ object test {
       .enableHiveSupport()
       .getOrCreate()
 
-    spark.sql("select now()").show()
+    spark.sql("select count(*) from dm_release.dm_customer_cube").show()
 
     spark.close()
   }
