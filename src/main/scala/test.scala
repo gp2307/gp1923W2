@@ -8,9 +8,7 @@ object test {
       .config("spark.warehouse","hdfs://hadoop001:9000/user/hive/warehouse")
       .enableHiveSupport()
       .getOrCreate()
-
     spark.sql("select * from dw_release.dw_release_register_users limit 10").show()
-
     spark.close()
   }
 }
