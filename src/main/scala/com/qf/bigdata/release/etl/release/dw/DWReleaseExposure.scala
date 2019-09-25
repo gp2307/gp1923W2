@@ -7,14 +7,14 @@ import org.apache.spark.SparkConf
 import org.apache.spark.sql.{SaveMode, SparkSession}
 import org.slf4j.{Logger, LoggerFactory}
 
-class DWReleaseCustomer {
+class DWReleaseExposure {
 
 }
 
 /**
   * DW 投放目标客户主题
   */
-object DWReleaseCustomer {
+object DWReleaseExposure {
   // 日志处理,获取当前类的日志
   private val logger: Logger = LoggerFactory.getLogger(DWReleaseCustomer.getClass)
   /**
@@ -34,20 +34,20 @@ object DWReleaseCustomer {
       val saveMode = SaveMode.Overwrite
 
       // 获取日志字段数据
-      val customerColumns = DWReleaseColumnsHelper.selectDWReleaseCustomerColumns()
+      val customerColumns = DWReleaseColumnsHelper.selectDWReleaseExposureColumns()
       //设置条件 当天数据 获取目标用户：01
       val customerReleaseCondition = (col(s"${ReleaseConstant.DEF_PARTITION}") === lit(bdp_day)
         and
-        col(s"${ReleaseConstant.COL_RELEASE_SESSION_STATUS}") === lit(ReleaseStatusEnum.CUSTOMER.getCode))
+        col(s"${ReleaseConstant.COL_RELEASE_SESSION_STATUS}") === lit(ReleaseStatusEnum.SHOW.getCode))
       val customerReleaseDF = SparkHelper.readTableData(spark,ReleaseConstant.ODS_RELEASE_SESSION,customerColumns)
-      //填入条件
+        //填入条件
         .where(customerReleaseCondition)
         //重分区
         .repartition(ReleaseConstant.DEF_SOURCE_PARTITION)
 
       customerReleaseDF.show(10,false)
       //目标用户（存储）
-//      SparkHelper.writeTableDate(customerReleaseDF,ReleaseConstant.DW_RELEASE_CUSTOMER,saveMode)
+      //      SparkHelper.writeTableDate(customerReleaseDF,ReleaseConstant.DW_RELEASE_CUSTOMER,saveMode)
     }catch {
       //错误信息处理
       case ex:Exception =>{

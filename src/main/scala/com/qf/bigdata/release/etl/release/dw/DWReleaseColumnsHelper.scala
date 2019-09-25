@@ -1,5 +1,7 @@
 package com.qf.bigdata.release.etl.release.dw
 
+import com.qf.bigdata.release.enums.ReleaseStatusEnum
+
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -9,7 +11,7 @@ object DWReleaseColumnsHelper {
   /**
     * 目标用户
     */
-  def selectDWReleaseCustomerColumns():ArrayBuffer[String]={
+  def selectDWReleaseCustomerColumns(): ArrayBuffer[String] = {
     val columns = new ArrayBuffer[String]()
     columns.+=("release_session")
     columns.+=("release_status")
@@ -30,5 +32,66 @@ object DWReleaseColumnsHelper {
     columns.+=("ct")
     columns.+=("bdp_day")
     columns
+  }
+
+  /**
+    * 曝光主题
+    */
+  def selectDWReleaseExposureColumns(): ArrayBuffer[String] = {
+    val columns = new ArrayBuffer[String]()
+    columns.+=("release_session")
+    columns.+=("release_status")
+    columns.+=("device_num")
+    columns.+=("device_type")
+    columns.+=("sources")
+    columns.+=("channels")
+    columns.+=("ct")
+    columns.+=("bdp_day")
+    columns
+  }
+
+  /**
+    * 注册主题
+    */
+  def selectDWReleaseRegisterColumns(): ArrayBuffer[String] = {
+    val columns = new ArrayBuffer[String]()
+    columns.+=("get_json_object(exts,'$.user_register') as user_id")
+    columns.+=("release_session")
+    columns.+=("release_status")
+    columns.+=("device_num")
+    columns.+=("device_type")
+    columns.+=("sources")
+    columns.+=("channels")
+    columns.+=("ct")
+    columns.+=("bdp_day")
+    columns
+  }
+  /**
+    * 点击主题
+    */
+  def selectDWReleaseCheckColumns(): ArrayBuffer[String] = {
+    val columns = new ArrayBuffer[String]()
+    columns.+=("release_session")
+    columns.+=("device_num")
+    columns.+=("device_type")
+    columns.+=("sources")
+    columns.+=("channels")
+    columns.+=("ct")
+    columns.+=("bdp_day")
+    columns.+=("release_status")
+    columns
+  }
+  def selectDWReleaseColumns(status:String): ArrayBuffer[String] = {
+    if(status.equals(ReleaseStatusEnum.CUSTOMER.getCode)){
+      selectDWReleaseCustomerColumns
+    }else  if(status.equals(ReleaseStatusEnum.SHOW.getCode)){
+      selectDWReleaseExposureColumns()
+    }else  if(status.equals(ReleaseStatusEnum.REGISTER.getCode)){
+      selectDWReleaseRegisterColumns()
+    }else  if(status.equals(ReleaseStatusEnum.CLICK.getCode)){
+      selectDWReleaseCheckColumns()
+    }else{
+      new ArrayBuffer[String]()
+    }
   }
 }
