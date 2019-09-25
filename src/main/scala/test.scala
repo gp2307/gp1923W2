@@ -21,5 +21,6 @@ object test {
     val map = Map((1,2),(1,2))
     println(map.get(1).get)
     println(map.getOrElse(1,0))
+    println(s"dasda:${map.getOrElse(1,0)}:sdasd")
   }
 }

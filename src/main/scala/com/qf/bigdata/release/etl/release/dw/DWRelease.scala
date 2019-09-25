@@ -9,13 +9,11 @@ import org.slf4j.{Logger, LoggerFactory}
 class DWRelease {
 
 }
-
 object DWRelease {
   // 日志处理,获取当前类的日志
   private val logger: Logger = LoggerFactory.getLogger(DWReleaseCustomer.getClass)
   /**
-    * 目标客户
-    * 01
+    * DM层
     */
   def handleReleaseJob(spark:SparkSession,appName:String,bdp_day:String,state:String,tableName:String):Unit ={
     // 获取当前时间
@@ -31,7 +29,7 @@ object DWRelease {
 
       // 获取日志字段数据
       val customerColumns = DWReleaseColumnsHelper.selectDWReleaseColumns(state)
-      //设置条件 当天数据 获取目标用户：01
+      //设置条件 当天数据
       val customerReleaseCondition = (col(s"${ReleaseConstant.DEF_PARTITION}") === lit(bdp_day)
         and
         col(s"${ReleaseConstant.COL_RELEASE_SESSION_STATUS}") === lit(state))
@@ -42,7 +40,7 @@ object DWRelease {
         .repartition(ReleaseConstant.DEF_SOURCE_PARTITION)
 
       customerReleaseDF.show(10,false)
-      //目标用户（存储）
+      //存储
       SparkHelper.writeTableDate(customerReleaseDF,tableName,saveMode)
     }catch {
       //错误信息处理
@@ -54,9 +52,8 @@ object DWRelease {
       println(s"任务处理时长:${appName},bdp_day = ${bdp_day},${System.currentTimeMillis() - begin}")
     }
   }
-
   /**
-    * 投放目标用户
+    * 投放
     */
   def handleJobs(appName:String,bdp_day_begin:String,bdp_day_end:String)={
     val begin = System.currentTimeMillis()
@@ -91,11 +88,10 @@ object DWRelease {
         logger.error(ex.getMessage,ex)
       }
     }finally {
-      println(s"任务处理时长:,${System.currentTimeMillis() - begin}")
+      println(s"任务处理时长:${System.currentTimeMillis() - begin}")
       spark.stop()
     }
   }
-
   def main(args: Array[String]): Unit = {
     val appName = "dw_release_job"
     val bdp_day_begin = "2019-09-24"
